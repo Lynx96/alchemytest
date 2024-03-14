@@ -24,23 +24,19 @@ const helloWorldContract = new ethers.Contract(
   signer
 );
 
-async function main() {
-  const message = await helloWorldContract.message();
-  console.log("The message is: " + message);
+const txHash =
+  "0x83c1f1d1ad77adf2b0603e65b4eae9689a34720fa4027ec83417033e89275b89"; // Replace with your actual transaction hash
 
-  console.log("Updating the message...");
-  const tx = await helloWorldContract.update("ccccccccccccccc");
-  await tx.wait();
-
-  console.log(tx.hash);
-
-  const newMessage = await helloWorldContract.message();
-  console.log("The new message is: " + newMessage);
-}
-
-main()
-  .then(() => process.exit(0))
+alchemyProvider
+  .getTransaction(txHash)
+  .then((transaction) => {
+    if (transaction) {
+      console.log("Transaction data:", transaction.data);
+      // Process the data as needed
+    } else {
+      console.log("Transaction not found.");
+    }
+  })
   .catch((error) => {
-    console.error(error);
-    process.exit(1);
+    console.error("Error fetching transaction:", error);
   });
