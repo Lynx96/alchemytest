@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require('fs');
 require("dotenv").config({ path: path.resolve("../.env") });
 
 const API_KEY = process.env.API_KEY;
@@ -25,18 +26,35 @@ const helloWorldContract = new ethers.Contract(
 );
 
 async function main() {
+  const filePath = './transactionHashes.txt';
   const message = await helloWorldContract.message();
   console.log("The message is: " + message);
 
   console.log("Updating the message...");
-  const tx = await helloWorldContract.update("ccccccccccccccc");
+  const tx = await helloWorldContract.update("Sixth attempt!");
   await tx.wait();
+  const updateTransactionHash = tx.hash;
+  saveTransactionHash(updateTransactionHash, filePath);
 
-  console.log(tx.hash);
+  console.log(updateTransactionHash);
 
   const newMessage = await helloWorldContract.message();
   console.log("The new message is: " + newMessage);
+
 }
+function saveTransactionHash(updateTransactionHash, filePath){
+  try {
+    fs.appendFileSync(filePath, updateTransactionHash + '\n');
+    console.log("Hash appended successfully!")    
+        
+  } catch (error) {
+    console.log("Error appending the hash!");
+    console.log(error.message);
+  }
+   
+
+}
+
 
 main()
   .then(() => process.exit(0))
