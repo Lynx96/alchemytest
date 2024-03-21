@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require('fs');
-const abiDecoder = require('abi-decoder')
+const abiDecoder = require('abi-decoder');
 require("dotenv").config({ path: path.resolve("../.env") });
 
 const API_KEY = process.env.API_KEY;
@@ -34,19 +34,23 @@ async function main() {
 
   console.log("Updating the message...");
   abiDecoder.addABI(contractABI.abi);
-  const tx = await helloWorldContract.update("Fifteenth attempt!");
+  const tx = await helloWorldContract.update("Tenth attempt!");
   await tx.wait();
   const updateTransactionHash = tx.hash;
   saveTransactionHash(updateTransactionHash, filePath);
   const txData = tx.data;
+  console.log(tx)
+  /* const owner = await helloWorldContract.owner();
 
-  console.log(tx.data);
+  console.log("The contract owner is: ", owner); */
+  
  /*  const decoded = interface.parseTransaction(txData) */
   const decoded = abiDecoder.decodeMethod(txData);
   console.log("Decoded data is: ", decoded);
 
   const newMessage = await helloWorldContract.message();
   console.log("The new message is: " + newMessage);
+ /*  console.log(helloWorldContract); */
 
 }
 function saveTransactionHash(updateTransactionHash, filePath){
@@ -57,11 +61,9 @@ function saveTransactionHash(updateTransactionHash, filePath){
   } catch (error) {
     console.log("Error appending the hash!");
     console.log(error.message);
-  }
-   
+  }   
 
 }
-
 
 main()
   .then(() => process.exit(0))
